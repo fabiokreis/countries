@@ -1,7 +1,8 @@
-package com.fabiokreis.countries
+package com.fabiokreis.countries.view
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.fabiokreis.countries.R
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
