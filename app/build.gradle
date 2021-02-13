@@ -57,8 +57,8 @@ dependencies {
 
     implementation "com.google.dagger:dagger:$daggerVersion"
     implementation "com.google.dagger:dagger-android-support:$daggerVersion"
-    implementation "com.google.dagger:dagger-compiler:$daggerVersion"
-    implementation "com.google.dagger:dagger-android-processor:$daggerVersion"
+    annotationProcessor "com.google.dagger:dagger-compiler:$daggerVersion"
+    annotationProcessor "com.google.dagger:dagger-android-processor:$daggerVersion"
 
     implementation "com.android.support:recyclerview-v7:$supportVersion"
 
