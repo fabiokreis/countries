@@ -1,13 +1,23 @@
 package com.fabiokreis.countries
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import com.fabiokreis.countries.model.CountriesService
+import com.fabiokreis.countries.model.Country
+import com.fabiokreis.countries.viewmodel.ListViewModel
 import io.reactivex.Scheduler
+import io.reactivex.Single
 import io.reactivex.android.plugins.RxAndroidPlugins
 import io.reactivex.disposables.Disposable
 import io.reactivex.internal.schedulers.ExecutorScheduler
 import io.reactivex.plugins.RxJavaPlugins
+import org.junit.Assert
 import org.junit.Before
 import org.junit.Rule
+import org.junit.Test
+import org.mockito.InjectMocks
+import org.mockito.Mock
+import org.mockito.Mockito.`when`
+import org.mockito.MockitoAnnotations
 import java.util.concurrent.Executor
 import java.util.concurrent.TimeUnit
 
@@ -15,6 +25,47 @@ class ListViewModelTest {
 
     @get:Rule
     var rule = InstantTaskExecutorRule()
+
+    @Mock
+    lateinit var countriesService: CountriesService
+
+    @InjectMocks
+    var listViewModel = ListViewModel()
+
+    private var testSingle: Single<List<Country>>? = null
+
+    @Before
+    fun setup() {
+        MockitoAnnotations.initMocks(this)
+    }
+
+    @Test
+    fun getCountriesSuccess() {
+        val country = Country("countryName", "capital", "url")
+        val countriesList = arrayListOf(country)
+
+        testSingle = Single.just(countriesList)
+
+        `when`(countriesService.getCountries()).thenReturn(testSingle)
+
+        listViewModel.refresh()
+
+        Assert.assertEquals(1, listViewModel.countries.value?.size)
+        Assert.assertFalse(listViewModel.countryLoadError.value ?: true)
+        Assert.assertFalse(listViewModel.loading.value ?: true)
+    }
+
+    @Test
+    fun getCountriesFail() {
+        testSingle = Single.error(Throwable())
+
+        `when`(countriesService.getCountries()).thenReturn(testSingle)
+
+        listViewModel.refresh()
+
+        Assert.assertTrue(listViewModel.countryLoadError.value ?: false)
+        Assert.assertFalse(listViewModel.loading.value ?: true)
+    }
 
     @Before
     fun setUpRxSchedulers() {
